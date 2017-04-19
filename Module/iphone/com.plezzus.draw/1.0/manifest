@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0
+apiversion: 2
+description: Draw Module
+author: Plezzus, LLC
+license: See the LICENSE file included with this module
+copyright: Copyright (c) 2014 Plezzus, LLC, All Rights Reserved
+
+
+# these should not be edited
+name: draw
+moduleid: com.plezzus.draw
+guid: 279cdf03-64a9-4ac3-ad84-1d2712a4d6f4
+platform: iphone
+minsdk: 3.2.1.GA

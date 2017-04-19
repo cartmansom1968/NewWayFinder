@@ -1,0 +1,231 @@
+<h1>Draw Module Documentation</h1>
+<p>Copyright (c) 2014 Plezzus, LLC, All Rights Reserved</p>
+<p>This documentation is for Draw Module version 1.0, compiled with Appcelerator Titanium version 3.2.1.</p>
+<h2>Introduction</h2>
+<p>The Draw module makes it possible to do drawing operations in Appcelerator Titanium.</p>
+<p>You can create two different objects with the module, a Canvas and a CanvasView.
+Both have a nearly identical set of methods for drawing lines, shapes and images with different colors, gradients, line shapes, etc.
+After drawing onto a Canvas object you can retrieve the image as a blob.
+The CanvasView object simply displays its content once it receives a message that drawing is finished.</p>
+<p>The API is exactly the same for both the iOS and Android operating systems.
+Code using this module should be portable between the two with the exception of slight differences in the rendering output and a few of the more complex drawing operations (text and shadows).</p>
+<h2>Accessing the draw Module</h2>
+<p>To access this module from JavaScript, do the following:</p>
+<blockquote>
+<p><code>var Draw = require("com.plezzus.draw");</code></p>
+</blockquote>
+<p>The <code>Draw</code> variable is a reference to the module object.</p>
+<h2>Reference</h2>
+<p>The methods below don't have a return value unless one is specified.</p>
+<h3>Constructors</h3>
+<h4><code>Draw.createCanvas(width, height)</code></h4>
+<p>returns: a Canvas object</p>
+<p>Creates a Canvas object, which is a mutable bitmap stored in memory that can receive drawing commands.
+<code>width</code> and <code>height</code> are integers greater than 0 and define the size of the canvas in pixels.
+All of the drawing methods below can be called on this object (except <code>gcDone()</code> and <code>gcReset()</code>, which are used for CanvasView objects).
+<code>getBlob()</code> is used to retrieve the current image as a blob.
+Drawing method calls always use pixel units.</p>
+<h4><code>Draw.createCanvasView({ ... view options ... , canvasWidth: w, canvasHeight: h})</code></h4>
+<p>returns: a CanvasView object</p>
+<p>Creates a CanvasView object, which is a Titanium View with drawing methods added.
+<code>view options</code> are the properties passed when creating a normal Titanium View.
+All of the drawing methods below can be called on this object (except <code>getBlob()</code> and <code>getBitmap()</code>, which are used for Canvas objects).</p>
+<p>A CanvasView has two additional properties, <code>canvasWidth</code> and <code>canvasHeight</code>, which specify the logical width and height of the View's drawing area independent of the View's actual dimensions.
+If you define the view with a width and height of '3cm', for example, setting both canvasWidth and canvasHeight to a value of 3 sets the drawing area to 3x3 and lets you specify x and y values in cm's.
+If <code>canvasWidth</code> and <code>canvasHeight</code> are not specified or are set to 0, drawing coordinates are then in pixels on Android and DIPs on iOS regardless of the units specified in the view properties.
+Also, if you change either of these two properties after creating the view, you must call <code>gcDone()</code> again afterwards.</p>
+<h4><code>Draw.createBitmap(img)</code></h4>
+<p>returns: a Bitmap object</p>
+<p>Creates a Bitmap object, which is an immutable native bitmap stored in memory.
+<code>img</code> may be an image blob, file URL, Canvas or another Bitmap object.
+This object can be passed to any drawing method where an image is required.
+If used repeatedly in place of a blob or file URL, it is much more efficient than passing blobs or URL strings as arguments since the image isn't read from the blob or file every time it is used.</p>
+<h3>Paths</h3>
+<p>These methods are used to define a path for stroking and filling.
+There is only one path being defined or used in a Canvas or CanvasView object at any given time.
+It can be reused for multiple stroking and filling operations (and clippings or transformations) until it is reset by calling <code>gcBeginPath()</code>.</p>
+<p>Most drawing methods can be called on either a Canvas or CanvasView object.
+They are all prefixed with 'gc' (for "graphics context") to distinguish them from other View methods.
+<code>Canvas.</code> and <code>CanvasView.</code> here represent objects created by the constructors above.</p>
+<h4><code>Canvas.gcBeginPath()</code></h4>
+<h4><code>CanvasView.gcBeginPath()</code></h4>
+<p>Clears and initializes the current path (and all subpaths).
+This should be called before any move, line, or other path-related drawing methods are called.</p>
+<h4><code>Canvas.gcClosePath()</code></h4>
+<h4><code>CanvasView.gcClosePath()</code></h4>
+<p>Creates a closed subpath consisting of the results all path-related drawing methods called since the last <code>gcBeginPath()</code> or <code>gcClosePath()</code> call.
+A line is drawn from the current point to the first point in the subpath to make the path into a completely enclosed region.</p>
+<h4><code>Canvas.gcMoveTo(x, y)</code></h4>
+<h4><code>CanvasView.gcMoveTo(x, y)</code></h4>
+<p>Move the point to the <code>x</code>,<code>y</code> coordinate.</p>
+<h4><code>Canvas.gcLineTo(x, y)</code></h4>
+<h4><code>CanvasView.gcLineTo(x, y)</code></h4>
+<p>Draw a line to the <code>x</code>,<code>y</code> coordinate.</p>
+<h4><code>Canvas.gcCubicTo(x1, y1, x2, y2, x, y)</code></h4>
+<h4><code>CanvasView.gcCubicTo(x1, y1, x2, y2, x, y)</code></h4>
+<p>Draw a cubic Bezier curve to <code>x</code>,<code>y</code> using <code>x1</code>,<code>y1</code> and <code>x2</code>,<code>y2</code> as the control points.</p>
+<h4><code>Canvas.gcQuadTo(x1, y1, x, y)</code></h4>
+<h4><code>CanvasView.gcQuadTo(x1, y1, x, y)</code></h4>
+<p>Draw a quadratic Bezier curve to <code>x</code>,<code>y</code> using <code>x1</code>,<code>y1</code> as the control point.</p>
+<h4><code>Canvas.gcArcTo(x, y, rx, ry, sAng, eAng, (optional) counterclockwise)</code></h4>
+<h4><code>CanvasView.gcArcTo(x, y, rx, ry, sAng, eAng, (optional) counterclockwise)</code></h4>
+<p>Draw an arc with <code>x</code>,<code>y</code> as its center, <code>rx</code> and <code>ry</code> as the radii in the x and y directions, and <code>sAng</code> and <code>eAng</code> as the starting and ending angles in degrees.
+The optional <code>counterclockwise</code> argument is true or false and specifies whether the arc should be drawn counterclockwise (the default is clockwise).
+The separate <code>rx</code> and <code>ry</code> values allow an elliptical arc to be drawn (if <code>rx</code> and <code>ry</code> are equal, the result is a circular arc).</p>
+<h4><code>Canvas.gcRect(x, y, w, h)</code></h4>
+<h4><code>CanvasView.gcRect(x, y, w, h)</code></h4>
+<p>Draw a closed rectangle with its upper-left corner at <code>x</code>,<code>y</code>, a width of <code>w</code> and a height of <code>h</code>.</p>
+<h4><code>Canvas.gcCircle(x, y, r)</code></h4>
+<h4><code>CanvasView.gcCircle(x, y, r)</code></h4>
+<p>Draw a closed circle with its center at <code>x</code>,<code>y</code> and a radius of <code>r</code>.</p>
+<h4><code>Canvas.gcOval(x, y, rx, ry)</code></h4>
+<h4><code>CanvasView.gcOval(x, y, rx, ry)</code></h4>
+<p>Draw a closed oval or ellipse with its center at <code>x</code>,<code>y</code> and a radius of <code>rx</code> in the <code>x</code> direction and <code>ry</code> in the <code>y</code> direction.</p>
+<h3>Drawing Style</h3>
+<p>These methods affect how the path is stroked or filled.
+Some (<code>gcLinearGrad()</code>, <code>gcRadialGrad()</code> and <code>gcPattern()</code>) only affect the next stroke or fill operation.</p>
+<h4><code>Canvas.gcLineWidth(w)</code></h4>
+<h4><code>CanvasView.gcLineWidth(w)</code></h4>
+<p>Sets the line width for stroking.
+<code>w</code> is a value greater than 0.</p>
+<h4><code>Canvas.gcLineCap(cap)</code></h4>
+<h4><code>CanvasView.gcLineCap(cap)</code></h4>
+<p>Sets the line cap style for stroking.
+cap must be either <code>"butt"</code>, <code>"round"</code> or <code>"square"</code>.
+The default style is <code>"butt"</code>.</p>
+<h4><code>Canvas.gcLineJoin(join)</code></h4>
+<h4><code>CanvasView.gcLineJoin(join)</code></h4>
+<p>Sets the line join style for stroking.
+join must be either <code>"bevel"</code>, <code>"miter"</code> or <code>"round"</code>.
+The default style is <code>"miter"</code>.</p>
+<h4><code>Canvas.gcMiterLimit(l)</code></h4>
+<h4><code>CanvasView.gcMiterLimit(l)</code></h4>
+<p>Sets the miter limit for stroking.
+<code>l</code> is a value greater than 0.</p>
+<h4><code>Canvas.gcColor(col)</code></h4>
+<h4><code>CanvasView.gcColor(col)</code></h4>
+<p>Sets the color used for stroking and filling.
+<code>col</code> can be a descriptive string such as <code>"white"</code> or <code>"red"</code> or an RGB string such as <code>"#f8f"</code>, <code>"#4f8f"</code>, <code>"#f080f0"</code> or <code>"#40f088f0"</code>.
+It can also be an array of 3 or 4 numerical values from 0 to 255 representing the RGB components (the fourth value is an optional alpha value).</p>
+<p>The color remains set until the next call to <code>gcColor()</code>.</p>
+<h4><code>Canvas.gcLinearGrad(x1, y1, x2, y2, col1, col2)</code> or <code>Canvas.gcLinearGrad(x1, y1, x2, y2, cols)</code></h4>
+<h4><code>CanvasView.gcLinearGrad(x1, y1, x2, y2, col1, col2)</code> or <code>CanvasView.gcLinearGrad(x1, y1, x2, y2, cols)</code></h4>
+<p>Specifies a linear gradient used for stroking and filling.
+The gradient ranges from <code>x1</code>,<code>y1</code> to <code>x2</code>,<code>y2</code> and from color <code>col1</code> to color <code>col2</code> (see <code>gcColor()</code> for how to specify colors).
+Instead of passing <code>col1</code> and <code>col2</code>, you can instead pass an array of objects containing colors and stop positions ranging from 0 to 1, for example: <code>[{position: 0, color: 'red'}, {position: 0.4, color: 'orange'}, {position: 1, color: 'yellow'}]</code>.
+(The keyword <code>location</code> can also be used instead of <code>position</code>.)</p>
+<p>The gradient only remains effective until the next stroke or fill operation.
+After this, the next stroke/fill will use the color specified with <code>gcColor()</code>.</p>
+<h4><code>Canvas.gcRadialGrad(x, y, r1, r2, col1, col2)</code> or <code>Canvas.gcLinearGrad(x, y, r1, r2, cols)</code></h4>
+<h4><code>CanvasView.gcRadialGrad(x, y, r1, r2, col1, col2)</code> or <code>CanvasView.gcLinearGrad(x, y, r1, r2, cols)</code></h4>
+<p>Specifies a radial gradient used for stroking and filling.
+The gradient is centered at <code>x</code>,<code>y</code>, extends from a radius of <code>r1</code> to a radius of <code>r2</code>, and ranges from color <code>col1</code> to color <code>col2</code> (see <code>gcColor()</code> for how to specify colors).
+Instead of passing <code>col1</code> and <code>col2</code>, you can pass an array of objects containing colors and stop positions ranging from 0 to 1 (see <code>gcLinearGrad()</code>).</p>
+<p>The gradient only remains effective until the next stroke or fill operation.
+After this, the next stroke/fill will use the color specified with <code>gcColor()</code>.</p>
+<h4><code>Canvas.gcPattern(img)</code></h4>
+<h4><code>CanvasView.gcPattern(img)</code></h4>
+<p>Defines a pattern used for stroking and filling.
+<code>img</code> may be an image blob, file URL, Canvas or Bitmap object (the most efficient option).
+The image passed to this function is tiled in both the <code>x</code> and <code>y</code> directions when <code>gcStroke()</code> or <code>gcFill()</code> is called.</p>
+<p>The pattern only remains effective until the next stroke or fill operation.
+After this, the next stroke/fill will use the color specified with <code>gcColor()</code>.</p>
+<h4><code>Canvas.gcFont(font)</code></h4>
+<h4><code>CanvasView.gcFont(font)</code></h4>
+<p>Sets the font used for subsequent <code>gcText()</code> calls.
+<code>font</code> is the same as the Font object assigned to the font property when defining Titanium views, for example: <code>{fontFamily: "myfont", fontSize: 20, fontWeight: "bold", fontStyle: "italic"}</code>.
+A font specification isn't portable between iOS and Android since fonts and font sizes are handled differently on each platform.
+<code>gcGetTextWidth()</code> is provided to help rectify this.</p>
+<h4><code>Canvas.gcGetTextWidth(text, font)</code></h4>
+<h4><code>CanvasView.gcGetTextWidth(text, font)</code></h4>
+<p>Returns: the width of the text in pixels (or DIPs) if it were rendered in the specified font.
+Use this to help normalize the appearance of text across Android and iOS.</p>
+<h4><code>Canvas.gcShadow(col, r, x, y)</code> or <code>Canvas.gcShadow()</code></h4>
+<h4><code>CanvasView.gcShadow(col, r, x, y)</code> or <code>CanvasView.gcShadow()</code></h4>
+<p>Specifies that a shadow is to be drawn with color <code>col</code>, blur radius <code>r</code> and offsets <code>x</code> and <code>y</code>.
+When called with no arguments or a radius of 0 no shadow is drawn.
+The shadow remains in effect until it is turned off (by specifying no shadow).</p>
+<h3>Transformations</h3>
+<p>These apply transformations of various kinds to the drawing surface.
+Transformations can be saved and undone with <code>gcSave()</code> and <code>gcRestore()</code>.</p>
+<h4><code>Canvas.gcScale(x, y)</code></h4>
+<h4><code>CanvasView.gcScale(x, y)</code></h4>
+<p>Scales the current transformation matrix by factors <code>x</code> and <code>y</code>.
+Subsequent stroke and fill operations will be affected by the scaling.
+This operation can be saved and undone using <code>gcSave()</code> and <code>gcRestore()</code>.</p>
+<h4><code>Canvas.gcRotate(ang)</code></h4>
+<h4><code>CanvasView.gcRotate(ang)</code></h4>
+<p>Rotates the current transformation matrix by ang degrees.
+Subsequent stroke and fill operations will be affected by the rotation.
+This operation can be saved and undone using <code>gcSave()</code> and <code>gcRestore()</code>.</p>
+<h4><code>Canvas.gcTranslate(x, y)</code></h4>
+<h4><code>CanvasView.gcTranslate(x, y)</code></h4>
+<p>Applies a translation to location <code>x</code>,<code>y</code> to the current transformation matrix.
+Subsequent stroke and fill operations will be affected by the translation.
+This operation can be saved and undone using <code>gcSave()</code> and <code>gcRestore()</code>.</p>
+<h4><code>Canvas.gcSkew(x, y)</code></h4>
+<h4><code>CanvasView.gcSkew(x, y)</code></h4>
+<p>Applies a skew to the current transformation matrix.
+Subsequent stroke and fill operations will be affected by the skew.
+This operation can be saved and undone using <code>gcSave()</code> and <code>gcRestore()</code>.</p>
+<h4><code>Canvas.gcClip()</code></h4>
+<h4><code>CanvasView.gcClip()</code></h4>
+<p>Applies a clipping region using the current path which intersects with all previous clipping regions.
+The even-odd fill rule is used if paths enclose or intersect one another.
+This operation can be saved and undone using <code>gcSave()</code> and <code>gcRestore()</code>.</p>
+<h4><code>Canvas.gcSave()</code></h4>
+<h4><code>CanvasView.gcSave()</code></h4>
+<p>Save the current transformation matrix and clipping state so that it can be restored later.
+The state is effectively pushed onto a stack, so this function can be called multiple times</p>
+<h4><code>Canvas.gcRestore()</code></h4>
+<h4><code>CanvasView.gcRestore()</code></h4>
+<p>Restore the last saved transformation matrix and clipping state.
+It can be called multiple times, once for each call to <code>gcSave()</code>.</p>
+<h3>Execution</h3>
+<p>These methods do the actual drawing.</p>
+<h4><code>Canvas.gcStroke()</code></h4>
+<h4><code>CanvasView.gcStroke()</code></h4>
+<p>Draws an outline of the current path.
+Gradients and patterns are reset after calling this method.</p>
+<h4><code>Canvas.gcFill()</code></h4>
+<h4><code>CanvasView.gcFill()</code></h4>
+<p>Fills the current path.
+The even-odd fill rule is used if paths enclose or intersect one another.
+Gradients and patterns are reset after calling this method.</p>
+<h4><code>Canvas.gcText(text, x, y)</code></h4>
+<h4><code>CanvasView.gcText(text, x, y)</code></h4>
+<p>Draws the text string <code>text</code> at position <code>x</code>,<code>y</code> using the colors, gradients or patterns that have been set.
+Gradients and patterns are reset after calling this method.</p>
+<h4><code>Canvas.gcDrawImage(img, sx, sy, sw, sh, x, y, w, h)</code></h4>
+<h4><code>CanvasView.gcDrawImage(img, sx, sy, sw, sh, x, y, w, h)</code></h4>
+<p>Draws a portion of an image defined by the rectangle <code>sx</code>,<code>sy</code>,<code>sw</code>,<code>sh</code> directly onto the canvas at rectangle <code>x</code>,<code>y</code>,<code>w</code>,<code>h</code>.
+img may be an image blob, file URL, Canvas or Bitmap object (the most efficient option).
+The source image is scaled if necessary.</p>
+<h3>Miscellaneous</h3>
+<h4><code>Canvas.getBlob()</code></h4>
+<p>returns: a Titanium Blob object</p>
+<p>Retrieves the image as a blob.
+Drawing may continue after calling this method.</p>
+<h4><code>Canvas.getBitmap()</code></h4>
+<p>returns: a Bitmap object</p>
+<p>Retrieves the image as a bitmap object, which can then be used in method calls in other Canvas or View objects.
+Drawing may continue after calling this method.</p>
+<h4><code>CanvasView.gcDone()</code></h4>
+<p>Indicates that drawing is finished on the view.
+The image does not appear on the screen until this method is called.
+Drawing may continue after calling this method, though <code>gcDone()</code> must be called again when further drawing is complete.</p>
+<h4><code>CanvasView.gcReset()</code></h4>
+<p>Clears the view and the effects of all previous drawing operations.</p>
+<h2>Examples</h2>
+<p>See the <code>app.js</code> file in the examples directory for examples of how to use this module.</p>
+<h2>Contact</h2>
+<p>Send bug reports to the following e-mail address:</p>
+<blockquote>
+<p>contact@plezzus.com</p>
+</blockquote>
+<p>If submitting a bug report, please be as detailed as possible.
+Include the operating system and version, the version of Titanium, the version of the Draw module, and example code to insure that the bug is reproducible.</p>
+<h2>License</h2>
+<p>See the <code>LICENSE</code> file that accompanies this module.
+Redistributable files are all files with <code>.a</code>, .so<code>and</code>.jar<code>extensions and are the files that Titanium copies into a project when it is built.
+The</code>Whitehall.ttf<code>file is freeware by Vic Fieger and is available at</code>http://www.fontsquirrel.com/fonts/Whitehall`.</p>

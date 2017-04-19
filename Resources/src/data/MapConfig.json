@@ -1,0 +1,13 @@
+{
+"maps":[ 
+  {
+     "mapId":"GWC",
+     "fileName":"Level1.jpg",
+     "offsetX":0,
+     "offsetY":0,
+     "width":3875,
+     "height":3034,
+     "direction":20
+  }
+]
+}
