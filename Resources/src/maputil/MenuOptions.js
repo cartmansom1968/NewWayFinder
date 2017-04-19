@@ -70,7 +70,8 @@ function getMACAddress() {
 
 	xhr.onerror = function() {
 		Titanium.API.info('Failed to connect to server');
-		return "68:DB:CA:94:77:B2";
+		macAddress = "68:DB:CA:94:77:B2";
+		return macAddress;
 	};		
 }
 
@@ -206,8 +207,13 @@ function createMenu() {
 	});
 	
 	var sourceLabel = Ti.UI.createLabel({
-  		color: '#900',
-  		font: { fontSize:14},
+  		color: '#008000',
+  		font : {
+			fontFamily : 'Helvetica Neue',
+			fontSize : 16,
+			fontWeight : 'bold'
+		},
+  		//font: { fontSize:14},
   		text: 'Source',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   		top: 0,
@@ -312,8 +318,12 @@ function createMenu() {
   	
   	
 	var destLabel = Ti.UI.createLabel({
-  		color: '#900',
-  		font: { fontSize:14 },
+  		color: '#e62e00',
+  		font : {
+			fontFamily : 'Helvetica Neue',
+			fontSize : 16,
+			fontWeight : 'bold'
+		},
   		text: 'Destination',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   		top: 0,
