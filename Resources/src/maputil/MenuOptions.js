@@ -61,16 +61,16 @@ function getMACAddress() {
 			macAddress = response.replace(/-/g, ":");
 		}
 		
-		if (macAddress==null) {
-			macAddress = "68:DB:CA:94:77:B2";
-		}
+		//if (macAddress==null) {
+		//	macAddress = "68:DB:CA:94:77:B2";
+		//}
 	
 		return macAddress;
 	};
 
 	xhr.onerror = function() {
 		Titanium.API.info('Failed to connect to server');
-		macAddress = "68:DB:CA:94:77:B2";
+		//macAddress = "68:DB:CA:94:77:B2";
 		return macAddress;
 	};		
 }
