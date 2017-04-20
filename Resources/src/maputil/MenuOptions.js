@@ -76,70 +76,34 @@ function getMACAddress() {
 }
 
 function getCurrLocation(macaddress) {
-	if (macAddress!=null) {
-		startX = 2673;
-		startY = 1577;
-		return;
-	}
+	//if (macAddress!=null) {
+	//	startX = 2673;
+	//	startY = 1577;
+	//	return;
+	//}
 	var xhr = Ti.Network.createHTTPClient();
-	var urlStr = "http://opfapi.techstudio.mobi/req.cag";
+	var urlStr = "http://203.116.84.168:8813/LastSeen?tenantId=GreatWorldCity&mac="+macaddress+"&threshold=90000";
 	xhr.setTimeout(40000);
-	//xhr.setValidatesSecureCertificate(false);
-	xhr.open('POST', urlStr);
-	xhr.setRequestHeader("content-type", "application/json");	
-	var obj = {};
-	obj.apiID = "som";
-	obj.apiPwd = "som123";
-	obj.macAddr = macaddress;
-	obj.action = "whereAmI";
-	obj.withSnapToPath = true;
-	xhr.send(JSON.stringify(obj));
+	xhr.open('GET', urlStr);
+	xhr.send();
+
 	xhr.onload = function() {
 		var data = this.responseText;
 		
 		Titanium.API.info('Data received = ' + data);
 		if (data == null) {
-			return false;
+			return;
 		}
 		
 		var temp = JSON.parse(data);
-		if (temp.statusCode!=0) {
-			alert("We cannot have any location information for your device. Try again later.");
-		} else {
-			currMapID = temp.data.mapID;
-			currX = Math.round(temp.data.x);
-			currY = Math.round(temp.data.y);
-			currTS = temp.data.changedOn;
-			if (temp.snapToPathData!=null) {
-				currX = Math.round(temp.snapToPathData.x);
-				currY = Math.round(temp.snapToPathData.y);
-			}	
-			mapView.addPoint(currX,currY);
-			mapView.adjustScroll(currX,currY);
-		}
-		 
-        /*
-        if (locButton==null) {
-        	locButton = Titanium.UI.createButton({
-			backgroundImage : "imgs/yellowround.png",
-			height : 100 * ratio,
-			width : 100 * ratio,
-			left : 100, //2000 - 50 * ratio,
-			top : 100, //2000 - 50 * ratio,
-			//bubbleParent: false
-        	});
-        	mainCanvas.add(locButton);
-        }		
-		locButton.setLeft(Math.round((currX)*ratio - offsetX - 50 * ratio));
-		locButton.setTop(Math.round((currY)*ratio - offsetY - 50 * ratio));
-		scrollView.scrollTo(locButton.getLeft()-20,locButton.getTop()-20);
-		//scrollView.setContentOffset({x:locButton.getLeft()-20,y:locButton.getTop()-20});
-		Titanium.API.info("Placed at "+locButton.getLeft()+" "+locButton.getTop());
-		
-		*/
-		//mainCanvas.remove(locButton);
-		//mainCanvas.add(locButton);
-		
+		if (temp.status=="success") {
+			if (temp.mapId="195") { 
+				startX = Math.round(temp.x);
+				startY = Math.round(temp.y);
+				mapView.addPoint(startX,startY);
+				mapView.adjustScroll(startX,startY);
+			}
+		} 
 		return true;
 	};
 
@@ -257,10 +221,10 @@ function createMenu() {
 		tapSet = false;
 		sourcePOIBtn.setColor("#808080");
 		poiSet = false;
-		var macAddress = getMACAddress();
+		//var macAddress = getMACAddress();
 		getCurrLocation(macAddress);
-		mapView.addStart(startX,startY);	
-	    mapView.adjustScroll(startX,startY);
+		//mapView.addStart(startX,startY);	
+	    //mapView.adjustScroll(startX,startY);
 		mapView.isEditable = false;
     });
 
